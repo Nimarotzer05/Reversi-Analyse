@@ -42,7 +42,7 @@ public class RealtimeEvaluator implements Evaluator {
 
         //return score;
         //return Math.min(cornerGrab(board,player),placement(board,player));
-        return placement(board,player) + mobility(board,player) + frontier(board,player);
+        return placement(board,player) + mobility(board,player) + frontier(board,player) + cornerGrab(board.player);
         //return  mobility(board,player) + frontier(board,player);
    }
 
@@ -155,25 +155,46 @@ public class RealtimeEvaluator implements Evaluator {
 
     }
 
-    public static int mobility(int[][] board , int player){
-        int oplayer = (player==1) ? 2 : 1;
+   public static int mobility(int[][] board, int player) {
+    int oplayer = (player == 1) ? 2 : 1;
 
-        int myMoveCount = getAllPossibleMoves(board,player).size();
-        int opMoveCount = getAllPossibleMoves(board,oplayer).size();
-        
-        //ArrayList<Integer> listMyPlayer= new ArrayList<Integer>();
-        //ArrayList<Integer> listOpPlayer = new ArrayList<Integer>();
+    List<Point> myMoves = getAllPossibleMoves(board, player);
+    List<Point> opMoves = getAllPossibleMoves(board, oplayer);
 
-        //listMyPlayer = moveCounts.get(player-1);
-        //System.out.println(listMyPlayer.toString());
-        //listOpPlayer = moveCounts.get(oplayer-1);
-        //System.out.println(listOpPlayer.toString());
+    int myMoveCount = myMoves.size();
+    int opMoveCount = opMoves.size();
 
-        //listMyPlayer.add(getAllPossibleMoves(board,player).size());
-        //listOpPlayer.add(getAllPossibleMoves(board,oplayer).size());
-        
-        //moveCounts.set(player-1,listMyPlayer);
-        //moveCounts.set(oplayer-1,listOpPlayer);
+    // Calculate the number of opponent pieces that can be captured
+    int captures = countPotentialCaptures(board, player);
+
+    // Adjust the mobility score based on capturing potential
+    int adjustedMobility = 100 * (myMoveCount + captures - opMoveCount) / (myMoveCount + opMoveCount + 1);
+
+    return adjustedMobility;
+}
+
+// Helper method to count potential captures for the given player
+private static int countPotentialCaptures(int[][] board, int player) {
+    int oplayer = (player == 1) ? 2 : 1;
+    int captures = 0;
+
+    List<Point> myMoves = getAllPossibleMoves(board, player);
+
+    for (Point move : myMoves) {
+        int i = move.i;
+        int j = move.j;
+
+        // Check if the move results in capturing an opponent piece
+        if (BoardHelper.isValidMove(board, player, i, j)) {
+            int[][] tempBoard = BoardHelper.copyBoard(board);
+            BoardHelper.makeMove(tempBoard, player, i, j);
+            int captured = BoardHelper.getCapturedCount(tempBoard, oplayer);
+            captures += captured;
+        }
+    }
+
+    return captures;
+}
 
 
         return 100 * (myMoveCount - opMoveCount) / (myMoveCount + opMoveCount + 1);
