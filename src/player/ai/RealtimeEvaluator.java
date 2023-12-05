@@ -93,14 +93,14 @@ public class RealtimeEvaluator implements Evaluator {
     }
 
     static int[][] SQUARE_SCORE = {
-            {100 , -10 , 8  ,  6 ,  6 , 8  , -10 ,  100},
+            {500 , -10 , 8  ,  6 ,  6 , 8  , -10 ,  500},
             {-10 , -25 ,  -4, -4 , -4 , -4 , -25 , -10 },
             {8   ,  -4 ,   6,   4,   4,   6,  -4 ,  8  },
             {6   ,  -4 ,   4,   0,   0,   4,  -4 ,  6  },
             {6   ,  -4 ,   4,   0,   0,   4,  -4 ,  6  },
             {8   ,  -4 ,   6,   4,   4,   6,  -4 ,  8  },
             {-10 , -25 ,  -4, -4 , -4 , -4 , -25 , -10 },
-            {100 , -10 , 8  ,  6 ,  6 , 8  , -10 ,  100}};
+            {500 , -10 , 8  ,  6 ,  6 , 8  , -10 ,  500}};
 
     public static int placement(int[][] board , int player){
         int oplayer = (player==1) ? 2 : 1;
@@ -134,7 +134,7 @@ public class RealtimeEvaluator implements Evaluator {
         if(board[7][0] == oplayer) opS += BoardHelper.getStableDisks(board,oplayer,7,0).size();
         if(board[7][7] == oplayer) opS += BoardHelper.getStableDisks(board,oplayer,7,7).size();
 
-        return 100 * (myS - opS) / (myS + opS + 1);
+        return 50 * (myS - opS) / (myS + opS + 1);
     }
 
     public static void writeMobility(int[][] board){
@@ -185,7 +185,7 @@ public class RealtimeEvaluator implements Evaluator {
         int myF = BoardHelper.getFrontierSquares(board,player).size();
         int opF = BoardHelper.getFrontierSquares(board,oplayer).size();
 
-        return 100 * (myF - opF) / (myF + opF + 1);
+        return 200 * (myF - opF) / (myF + opF + 1);
     }
 
     public static int cornerGrab(int[][] board , int player){
